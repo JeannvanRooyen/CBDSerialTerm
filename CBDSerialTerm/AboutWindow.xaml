@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CBDSerialTerm" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Style="{StaticResource MaterialDesignWindow}" Background="#303030"
-        Title="About" Height="250" Width="500" Foreground="white" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="None" FontFamily="Consolas" BorderBrush="Cyan" BorderThickness="1">
+        Title="About" Height="250" Width="500" Foreground="white" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="None" FontFamily="Consolas" BorderBrush="Cyan" BorderThickness="1" Icon="/appicon.ico">
     <Grid>
         <StackPanel Orientation="Vertical" Margin="0,0,40,70">
             <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="Serial Port Terminal" FontSize="16"/>

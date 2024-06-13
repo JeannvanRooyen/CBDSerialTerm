@@ -29,7 +29,15 @@ namespace CBDSerialTerm
         {
             Initialized += MainWindow_Initialized;
             Closing += MainWindow_Closing;
+           
             InitializeComponent();
+        }
+
+        private void MainTextBox_SelectionChanged(object sender, RoutedEventArgs e)
+        {
+            var enableMenus = mainTextBox != null && mainTextBox.Document != null && mainTextBox.Document.Blocks.Count > 0;
+            menuItemCopy.IsEnabled = enableMenus;
+            buttonCopy.IsEnabled = enableMenus;
         }
 
         private void MainWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
@@ -45,6 +53,7 @@ namespace CBDSerialTerm
         {
             UpdatePort();
             UpdateElements();
+            mainTextBox.SelectionChanged += MainTextBox_SelectionChanged;
         }
 
         private void UpdateElements()
@@ -171,10 +180,6 @@ namespace CBDSerialTerm
         {
             Dispatcher.InvokeAsync(() =>
             {
-                //if (new TextRange(mainTextBox.Document.ContentStart,mainTextBox.Document.ContentEnd).Text.Length > 10000)
-                //{
-                //    mainTextBox.Document.Blocks.FirstBlock.ContentStart.DeleteTextInRun( 1000);
-                //}
                 mainTextBox.AppendText(e);
                 mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.LightGreen;
                 scrollViewerRx.ScrollToBottom();
@@ -266,6 +271,36 @@ namespace CBDSerialTerm
                     string command = textBoxTx.Text;
                     serialTerminal.Write(command + "\r\n");
                 }
+            }
+        }
+
+        private void menuItemCopy_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the selected text from the RichTextBox
+            TextRange selectedTextRange = new TextRange(mainTextBox.Selection.Start, mainTextBox.Selection.End);
+
+            // Copy the selected text to the clipboard
+            Clipboard.SetText(selectedTextRange.Text);
+        }
+
+        private void buttonCopy_Click(object sender, RoutedEventArgs e)
+        {
+            // Get the selected text from the RichTextBox
+            TextRange selectedTextRange = new TextRange(mainTextBox.Selection.Start, mainTextBox.Selection.End);
+
+            // Copy the selected text to the clipboard
+            Clipboard.SetText(selectedTextRange.Text);
+        }
+
+        private void menuItemExit_Click(object sender, RoutedEventArgs e)
+        {
+            if (serialTerminal != null && serialTerminal.IsOpen)
+            {
+                MessageBox.Show("Port is open. Please close the port before closing the application.", "Cannot Close", MessageBoxButton.OK);
+            }
+            else
+            {
+                Close();
             }
         }
     }

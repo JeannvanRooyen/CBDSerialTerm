@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:CBDSerialTerm" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         Style="{StaticResource MaterialDesignWindow}"
         mc:Ignorable="d"
-        Title="Port Settings" d:Background="#303030" d:Foreground="White" Height="400" Width="400" WindowStartupLocation="CenterOwner" WindowStyle="None" BorderBrush="Cyan" BorderThickness="1" ResizeMode="NoResize" ShowInTaskbar="False">
+        Title="Port Settings" d:Background="#303030" d:Foreground="White" Height="400" Width="400" WindowStartupLocation="CenterOwner" WindowStyle="None" BorderBrush="Cyan" BorderThickness="1" ResizeMode="NoResize" ShowInTaskbar="False" Icon="/appicon.ico">
     <Grid>
         <Button x:Name="buttonClose" HorizontalAlignment="Right" Margin="0,5,5,0" VerticalAlignment="Top" Padding="0" Width="30" Height="30" Click="ButtonClose_Click">
             <materialDesign:PackIcon Kind="Close" Foreground="White" Width="20" Height="20" />

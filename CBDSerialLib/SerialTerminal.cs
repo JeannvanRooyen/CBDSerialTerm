@@ -10,7 +10,7 @@ public class SerialTerminal
     private Thread _readThread;
     private bool _continue;
 
-    public static List<int> Baudrates = new List<int> { 9600, 19200, 38400, 57600, 115200 };
+    public static List<int> BaudRates = new List<int> { 9600, 19200, 38400, 57600, 115200 };
 
     public static string[] PortNames => SerialPort.GetPortNames();
 

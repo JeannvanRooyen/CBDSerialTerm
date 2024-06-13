@@ -30,7 +30,7 @@ namespace CBDSerialTerm
 
         private void PortSettingsWindow_Initialized(object? sender, EventArgs e)
         {
-            comboBoxBaudrate.ItemsSource = CBDSerialLib.SerialTerminal.Baudrates;
+            comboBoxBaudrate.ItemsSource = CBDSerialLib.SerialTerminal.BaudRates;
           
             comboBoxParity.ItemsSource = Enum.GetValues(typeof(Parity)).Cast<Parity>();
             comboBoxStopBits.ItemsSource = Enum.GetValues(typeof(StopBits)).Cast<StopBits>();

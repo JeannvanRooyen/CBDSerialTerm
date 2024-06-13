@@ -6,16 +6,14 @@
         xmlns:local="clr-namespace:CBDSerialTerm" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
         Title="Serial Port Terminal" Height="600" Width="800"
-        Style="{StaticResource MaterialDesignWindow}" WindowStartupLocation="CenterScreen" FontFamily="Consolas">
+        Style="{StaticResource MaterialDesignWindow}" WindowStartupLocation="CenterScreen" FontFamily="Consolas" Icon="/appicon.ico">
     <Grid Background="#FF1E1E1E">
         <Menu HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="25" Foreground="LightGray">
             <MenuItem Header="_File" Padding="5" Height="25">
-                <MenuItem Header="_Exit"/>
+                <MenuItem Header="_Exit" x:Name="menuItemExit" Click="menuItemExit_Click"/>
             </MenuItem>
             <MenuItem Header="_Edit" Padding="5" Margin="5,0,0,0" Height="25">
-                <MenuItem Header="_Cut" IsEnabled="False"/>
-                <MenuItem Header="_Copy" IsEnabled="False"/>
-                <MenuItem Header="_Paste" IsEnabled="False"/>
+                <MenuItem Header="_Copy" IsEnabled="False" x:Name="menuItemCopy" Click="menuItemCopy_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Help" Padding="5" Height="25" Margin="5,0,0,0">
                 <MenuItem Header="_About" x:Name="menuItemAbout" Click="MenuItemAbout_Click"/>
@@ -40,8 +38,13 @@
                     </Button>
                     <Button x:Name="buttonToggleState" Cursor="Hand" IsEnabled="False" Click="buttonToggleState_Click" FontFamily="Arial" FontSize="16" ToolTip="Open / Close"  Padding="5,5,5,5">
                         <WrapPanel>
-                            <materialDesign:PackIcon Kind="CableData" Foreground="SkyBlue"/>
-                            <materialDesign:PackIcon x:Name="iconState" Kind="Play" Foreground="Gray"/>
+                            <materialDesign:PackIcon Kind="CableData" Foreground="SlateBlue"/>
+                            <materialDesign:PackIcon x:Name="iconState" Kind="Play" Foreground="SlateBlue"/>
+                        </WrapPanel>
+                    </Button>
+                    <Button x:Name="buttonCopy" Cursor="Hand" IsEnabled="False" Click="buttonCopy_Click" FontFamily="Arial" FontSize="16" ToolTip="Copy"  Padding="5,5,5,5">
+                        <WrapPanel>
+                            <materialDesign:PackIcon Kind="ContentCopy" Foreground="LawnGreen"/>
                         </WrapPanel>
                     </Button>
                 </ToolBar>
