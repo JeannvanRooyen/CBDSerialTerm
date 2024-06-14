@@ -11,10 +11,14 @@
 
   <ItemGroup>
     <None Remove="appicon.ico" />
+    <None Remove="SerialTerm.jpg" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="appicon.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SerialTerm.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

@@ -1,0 +1,13 @@
+﻿<Window x:Class="CBDSerialTerm.SplashWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CBDSerialTerm"
+        mc:Ignorable="d"
+        Title="SplashWindow" Height="450" Width="450" WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" KeyDown="Window_KeyDown">
+    <Grid MouseDown="Grid_MouseDown" >
+        <Image Source="/SerialTerm.jpg" Stretch="UniformToFill"/>
+        <Label x:Name="label" Content="CBD Serial Term V1.0" FontSize="14" HorizontalAlignment="Left" Margin="0,423,0,0" Foreground="#E5000000"/>
+    </Grid>
+</Window>

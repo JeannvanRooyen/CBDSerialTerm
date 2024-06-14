@@ -181,7 +181,7 @@ namespace CBDSerialTerm
             Dispatcher.InvokeAsync(() =>
             {
                 mainTextBox.AppendText(e);
-                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.LightGreen;
+                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.Gray;
                 scrollViewerRx.ScrollToBottom();
                 bytesReceived += e.Length;
 
