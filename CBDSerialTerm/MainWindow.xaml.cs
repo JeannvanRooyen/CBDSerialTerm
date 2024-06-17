@@ -10,6 +10,13 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using CBDSerialLib;
+using CBDSerialTerm.Graphing;
+using OxyPlot;
+using OxyPlot.Axes;
+using OxyPlot.Legends;
+using OxyPlot.Series;
+using OxyPlot.Wpf;
+
 
 namespace CBDSerialTerm
 {
@@ -22,7 +29,7 @@ namespace CBDSerialTerm
         private long bytesReceived = 0;
         private long bytesSent = 0;
         private long linesReceived = 0;
-
+        private Dictionary<int, GraphData> graphs = new Dictionary<int, GraphData>();
         private List<string> sentCommands = new List<string>();
 
         public MainWindow()
@@ -68,6 +75,7 @@ namespace CBDSerialTerm
                     buttonToggleState.IsEnabled = false;
                     textBoxTx.IsReadOnly = true;
                     textBoxTx.Text = "Port is not configured";
+                    buttonPortConfig.IsEnabled = true;
                 }
                 else
                 {
@@ -90,6 +98,7 @@ namespace CBDSerialTerm
                         labelPortState.Content = "State: " + (serialTerminal.IsOpen ? "Opened, " : isAvailable ? "Ready" : "Not Available") + ", ";
                         iconState.Kind = serialTerminal.IsOpen ? MaterialDesignThemes.Wpf.PackIconKind.Stop : MaterialDesignThemes.Wpf.PackIconKind.Play;
                         textBoxTx.IsReadOnly = !serialTerminal.IsOpen;
+                        buttonPortConfig.IsEnabled = !serialTerminal.IsOpen;
                     }
                     else
                     {
@@ -97,6 +106,7 @@ namespace CBDSerialTerm
                         iconState.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
                         textBoxTx.IsReadOnly = true;
                         textBoxTx.Text = "Port is not configured";
+                        buttonPortConfig.IsEnabled = true;
                     }
                 }
             }
@@ -176,23 +186,173 @@ namespace CBDSerialTerm
             }
         }
 
+        private void DisplayGraphs()
+        {
+            scrollViewerGraph.Content = null;
+
+            try
+            {
+
+                GraphComponent graphComponent = new GraphComponent();
+                PlotModel plotModel = new PlotModel
+                {
+                    Title = "Graphs",
+                    IsLegendVisible = true,
+                    PlotAreaBorderColor = OxyColors.Transparent,
+                    Background = OxyColors.LightGray,
+                    TextColor = OxyColors.Black,
+                    TitleColor = OxyColors.Black
+                };
+
+                var xAxis = new LinearAxis
+                {
+                    Position = AxisPosition.Bottom,
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    MajorGridlineColor = OxyColors.Gray,
+                    MinorGridlineColor = OxyColors.LightGray,
+                    TicklineColor = OxyColors.Black
+                };
+                plotModel.Axes.Add(xAxis);
+
+                var yAxis = new LinearAxis
+                {
+                    Position = AxisPosition.Left,
+                    MajorGridlineStyle = LineStyle.Solid,
+                    MinorGridlineStyle = LineStyle.Dot,
+                    MajorGridlineColor = OxyColors.Gray,
+                    MinorGridlineColor = OxyColors.LightGray,
+                    TicklineColor = OxyColors.Black
+                };
+                plotModel.Axes.Add(yAxis);
+
+                var legend = new Legend
+                {
+                    LegendPlacement = LegendPlacement.Outside,
+                    LegendPosition = LegendPosition.TopRight,
+                    LegendOrientation = LegendOrientation.Horizontal,
+                    LegendBackground = OxyColors.White,
+                    LegendBorder = OxyColors.Black
+                };
+
+                plotModel.Legends.Add(legend);
+
+                foreach (var graph in graphs)
+                {
+                    var tempColor = GraphData.GetRandomColor();
+                    var points = graph.Value.Values.Select((v, i) => new DataPoint(i, v));
+                    var lineSeries = new LineSeries
+                    {
+                        Title = graph.Value.Title,
+                        Color = graph.Value.Color,
+                        MarkerType = MarkerType.Circle,
+                        MarkerFill = OxyColors.White,
+                        MarkerStroke = graph.Value.MarkerStroke,
+                        MarkerStrokeThickness = 1.5
+                    };
+                    lineSeries.Points.AddRange(points);
+                    plotModel.Series.Add(lineSeries);
+                }
+
+                graphComponent.SetView(plotModel);
+
+                scrollViewerGraph.Content = graphComponent;
+            }
+            catch (Exception ex)
+            {
+                // Inform the user of the specific syntax error
+                mainTextBox.Document.Blocks.Add(new Paragraph());
+                mainTextBox.AppendText(ex.GetType().ToString() + ": " + ex.Message);
+                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.OrangeRed;
+                mainTextBox.Document.Blocks.Add(new Paragraph());
+                scrollViewerRx.ScrollToBottom();
+            }
+        }
+
+
         private void SerialTerminal_DataReceived(object? sender, string e)
         {
             Dispatcher.InvokeAsync(() =>
             {
+                if (e.StartsWith("GRAPH:SERIES:"))
+                {
+                    try
+                    {
+                        var parts = e.Split(new[] { ':', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                        // Check if the command has the minimum required parts
+                        if (parts.Length < 5)
+                        {
+                            throw new FormatException("Invalid command format: not enough parts.");
+                        }
+
+                        // Parse the series index
+                        if (!int.TryParse(parts[2], out int seriesIndex))
+                        {
+                            throw new FormatException($"Invalid series index: {parts[2]} is not an integer.");
+                        }
+
+                        if (parts.Length >= 5)
+                        {
+                            string seriesTitle = parts[3];
+                            var data = new List<double>();
+                            for (int i = 5; i < parts.Length; i++)
+                            {
+                                if (!double.TryParse(parts[i], out double value))
+                                {
+                                    throw new FormatException($"Invalid data value: {parts[i]} is not a valid number.");
+                                }
+                                data.Add(value);
+                            }
+
+                            if (!graphs.ContainsKey(seriesIndex))
+                            {
+                                // Create new series if it doesn't exist
+                                graphs[seriesIndex] = new GraphData(seriesTitle);
+                            }
+                            else if (graphs[seriesIndex].Title != seriesTitle)
+                            {
+                                // Update the title if it has changed
+                                graphs[seriesIndex].Title = seriesTitle;
+                            }
+
+                            graphs[seriesIndex].Values.AddRange(data);
+
+                            DisplayGraphs();
+                        }
+                    }
+                    catch (FormatException ex)
+                    {
+                        // Inform the user of the specific syntax error
+                        mainTextBox.Document.Blocks.Add(new Paragraph());
+                        mainTextBox.AppendText(ex.GetType().ToString() + ": " + ex.Message);
+                        mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.OrangeRed;
+                        mainTextBox.Document.Blocks.Add(new Paragraph());
+                        scrollViewerRx.ScrollToBottom();
+                    }
+                    catch (Exception ex)
+                    {
+                        // Inform the user of the specific syntax error
+                        mainTextBox.Document.Blocks.Add(new Paragraph());
+                        mainTextBox.AppendText(ex.GetType().ToString() + ": " + ex.Message);
+                        mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.OrangeRed;
+                        mainTextBox.Document.Blocks.Add(new Paragraph());
+                        scrollViewerRx.ScrollToBottom();
+                    }
+                }
+
                 mainTextBox.AppendText(e);
-                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.Gray;
+                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.Silver;
                 scrollViewerRx.ScrollToBottom();
                 bytesReceived += e.Length;
 
-                if (e.Contains("\n") ||  e.Contains("\r"))
+                if (e.Contains("\n") || e.Contains("\r"))
                 {
                     linesReceived++;
                 }
 
                 labelRX.Content = $"Rx: {bytesReceived:#,###,###,###} bytes / {linesReceived} lines";
-            }
-            );
+            });
         }
 
         private void buttonToggleState_Click(object sender, RoutedEventArgs e)
@@ -238,6 +398,10 @@ namespace CBDSerialTerm
                         return;
                     }
                 }
+
+                scrollViewerGraph.Content = null;
+
+                graphs = new Dictionary<int, GraphData>();
 
                 mainTextBox.Document.Blocks.Clear();
                 bytesReceived = 0;
@@ -301,6 +465,15 @@ namespace CBDSerialTerm
             else
             {
                 Close();
+            }
+        }
+
+        private void buttonTx_Click(object sender, RoutedEventArgs e)
+        {
+            if (serialTerminal != null && serialTerminal.IsOpen && !string.IsNullOrEmpty(textBoxTx.Text))
+            {
+                string command = textBoxTx.Text;
+                serialTerminal.Write(command + "\r\n");
             }
         }
     }

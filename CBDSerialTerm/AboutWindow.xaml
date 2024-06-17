@@ -5,16 +5,20 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBDSerialTerm" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Style="{StaticResource MaterialDesignWindow}" Background="#303030"
-        Title="About" Height="250" Width="500" Foreground="white" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="None" FontFamily="Consolas" BorderBrush="Cyan" BorderThickness="1" Icon="/appicon.ico">
+        Style="{StaticResource MaterialDesignWindow}" Background="#202020"
+        Title="About" Height="400" Width="600" Foreground="white" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" ShowInTaskbar="False" WindowStyle="None" FontFamily="Consolas" BorderBrush="Cyan" BorderThickness="1" Icon="/appicon.ico">
     <Grid>
+        <Image Source="/SerialTerm.jpg" Stretch="UniformToFill" Opacity="0.2" />
         <StackPanel Orientation="Vertical" Margin="0,0,40,70">
             <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="Serial Port Terminal" FontSize="16"/>
             <TextBlock HorizontalAlignment="Stretch" TextWrapping="Wrap" Margin="10,10,0,0" VerticalAlignment="Top" Text="Developed for easy connection to serial port devices like MCU's." FontStyle="Italic"/>
-            <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="Developed by:"/>
-            <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="Code Blood Dev (Pty) Ltd." FontSize="14"/>
-            <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="License: Free"/>
+            <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="by:"/>
+            <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="Code Blood Dev (Pty) Ltd. - © 2024" FontSize="14"/>
+            <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="Terms and Conditions:"/>
+            <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="User Agreement"/>
+            <TextBlock HorizontalAlignment="Stretch" Margin="10,10,0,0" VerticalAlignment="Top" Text="Disclaimer"/>
         </StackPanel>
+        <Image Source="/logo.jpg" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="250"  Margin="20"/>
         <Button x:Name="buttonClose" HorizontalAlignment="Right" Margin="0,5,5,0" VerticalAlignment="Top" Padding="0" Width="30" Height="30" Click="buttonClose_Click">
             <materialDesign:PackIcon Kind="Close" Foreground="White" Width="20" Height="20" />
         </Button>

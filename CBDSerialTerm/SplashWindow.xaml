@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBDSerialTerm"
         mc:Ignorable="d"
-        Title="SplashWindow" Height="450" Width="450" WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" KeyDown="Window_KeyDown">
+        Title="SplashWindow" Height="600" Width="600" WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" KeyDown="Window_KeyDown">
     <Grid MouseDown="Grid_MouseDown" >
         <Image Source="/SerialTerm.jpg" Stretch="UniformToFill"/>
         <Label x:Name="label" Content="CBD Serial Term V1.0" FontSize="14" HorizontalAlignment="Left" Margin="0,423,0,0" Foreground="#E5000000"/>
+        <Image Source="/logo.jpg" VerticalAlignment="Center" HorizontalAlignment="Center" Width="250" Opacity="0.9"/>
     </Grid>
 </Window>

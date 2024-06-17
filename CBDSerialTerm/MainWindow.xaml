@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CBDSerialTerm" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="Serial Port Terminal" Height="600" Width="800"
+        Title="Serial Port Terminal" Height="700" Width="800"
         Style="{StaticResource MaterialDesignWindow}" WindowStartupLocation="CenterScreen" FontFamily="Consolas" Icon="/appicon.ico">
     <Grid Background="#FF1E1E1E">
         <Menu HorizontalAlignment="Stretch" VerticalAlignment="Top" Height="25" Foreground="LightGray">
@@ -23,13 +23,6 @@
 
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar>
-                    <!--<Button Content="New" Click="NewFile_Click"/>
-                    <Button Content="Open" Click="OpenFile_Click"/>
-                    <Button Content="Save" Click="SaveFile_Click"/>
-                    <Separator/>
-                    <Button Content="Cut" Click="Cut_Click"/>
-                    <Button Content="Copy" Click="Copy_Click"/>
-                    <Button Content="Paste" Click="Paste_Click"/>-->
                     <Button x:Name="buttonPortConfig" Cursor="Hand" Click="buttonPortConfig_Click" ToolTip="Port Settings" FontFamily="Arial" FontSize="16" Padding="5,5,5,5">
                         <materialDesign:PackIcon Kind="GearOutline" Foreground="DarkOrange"/>
                     </Button>
@@ -65,11 +58,22 @@
             </StackPanel>
         </StatusBar>
 
-        <ScrollViewer Margin="0,65,0,70" x:Name="scrollViewerRx">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="Auto"></ColumnDefinition>
+                <ColumnDefinition Width="200" MinWidth="100"></ColumnDefinition>
+            </Grid.ColumnDefinitions>
+            <ScrollViewer Margin="0,65,0,70" x:Name="scrollViewerRx" Grid.Column="0">
             <RichTextBox IsReadOnly="True" IsReadOnlyCaretVisible="True" Name="mainTextBox" Background="#40404040" VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled" FontFamily="Consolas" TextChanged="mainTextBox_TextChanged" Margin="5,5,5,5"/>
         </ScrollViewer>
+            <GridSplitter Grid.Column="1" Margin="0,65,0,70"  Width="5" HorizontalAlignment="Center" VerticalAlignment="Stretch" 
+                      Background="Gray" ShowsPreview="True" />
+            <ScrollViewer Margin="0,65,0,70" x:Name="scrollViewerGraph" Grid.Column="2">
+            </ScrollViewer>
+        </Grid>
         <TextBox d:Text="Text Box Tx" IsReadOnlyCaretVisible="True" x:Name="textBoxTx" Foreground="LightCyan" FontSize="16" Height="30" VerticalContentAlignment="Center" CaretBrush="Cyan" HorizontalAlignment="Stretch" Margin="5,0,45,35" TextWrapping="Wrap" BorderBrush="DarkCyan" BorderThickness="1" VerticalAlignment="Bottom" Padding="3" IsReadOnly="True" PreviewKeyDown="TextBoxTx_PreviewKeyDown"/>
-        <Button x:Name="button" HorizontalAlignment="Right" Margin="0,0,10,35" VerticalAlignment="Bottom" Padding="5" Width="30" Height="30">
+        <Button x:Name="buttonTx" HorizontalAlignment="Right" Margin="0,0,10,35" VerticalAlignment="Bottom" Padding="5" Width="30" Height="30" Click="buttonTx_Click">
             <materialDesign:PackIcon Kind="Send"></materialDesign:PackIcon>
         </Button>
     </Grid>
