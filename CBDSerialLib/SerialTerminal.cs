@@ -1,55 +1,54 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO.Ports;
 using System.Threading;
 
-namespace CBDSerialLib;
-
-public class SerialTerminal
+namespace CBDSerialLib
 {
-    private SerialPort _serialPort;
-    private Thread _readThread;
-    private bool _continue;
-
-    public static List<int> BaudRates = new List<int> { 9600, 19200, 38400, 57600, 115200 };
-
-    public static string[] PortNames => SerialPort.GetPortNames();
-
-    public event EventHandler<string>? DataReceived;
-
-    public event EventHandler<string>? DataSent;
-
-    public event EventHandler<Exception>? Exceptioned;
-
-    public SerialTerminal(string portName, int baudRate, Parity parity, int dataBits,StopBits stopBits, Handshake handshake, int readTimeout, int writeTimeout, bool rtsEnabled, bool dtrEnabled)
+    public class SerialTerminal : IDisposable
     {
-        _serialPort = new SerialPort
+        private SerialPort _serialPort;
+        private Thread _readThread;
+        private bool _continue;
+
+        public static List<int> BaudRates { get; } = new List<int> { 9600, 19200, 38400, 57600, 115200 };
+
+        public static string[] PortNames => SerialPort.GetPortNames();
+
+        public event EventHandler<string>? DataReceived;
+
+        public event EventHandler<string>? DataSent;
+
+        public event EventHandler<Exception>? Exceptioned;
+
+        public SerialTerminal(string portName, int baudRate, Parity parity, int dataBits, StopBits stopBits, Handshake handshake, int readTimeout, int writeTimeout, bool rtsEnabled, bool dtrEnabled)
         {
-            PortName = portName,
-            BaudRate = baudRate,
-            Parity = parity,
-            DataBits = (int)dataBits,
-            StopBits = stopBits,
-            Handshake = handshake,
-            ReadTimeout = readTimeout,
-            WriteTimeout = writeTimeout,
-            RtsEnable = rtsEnabled,
-            DtrEnable = dtrEnabled
-        };
+            _serialPort = new SerialPort
+            {
+                PortName = portName,
+                BaudRate = baudRate,
+                Parity = parity,
+                DataBits = dataBits,
+                StopBits = stopBits,
+                Handshake = handshake,
+                ReadTimeout = readTimeout,
+                WriteTimeout = writeTimeout,
+                RtsEnable = rtsEnabled,
+                DtrEnable = dtrEnabled
+            };
 
-        _readThread = new Thread(Read);
-    }
+            _readThread = new Thread(Read);
+        }
 
-    public void Open()
-    {
-        try
+        public void Open()
         {
-            if (_readThread.ThreadState == ThreadState.Stopped)
+            try
             {
-                _readThread = new Thread(Read);
-            }
+                if (_readThread.ThreadState == ThreadState.Stopped)
+                {
+                    _readThread = new Thread(Read);
+                }
 
-            if (_serialPort != null)
-            {
                 if (!_serialPort.IsOpen)
                 {
                     _serialPort.Open();
@@ -66,120 +65,117 @@ public class SerialTerminal
                     throw new Exception("Failed to open serial port.");
                 }
             }
-            else
+            catch (Exception err)
             {
-                throw new Exception("Serial Port Null");
+                OnExceptioned(err);
+                throw; // Rethrow the exception to preserve stack trace
             }
         }
-        catch (Exception err)
+
+        public bool IsOpen => _serialPort.IsOpen;
+
+        public void Close()
         {
-            OnExceptioned(err);
-            _ = err.Message;
-        }
-    }
-
-    public bool IsOpen => _serialPort != null && _serialPort.IsOpen;
-
-    public void Close()
-    {
-        try
-        {
-
-            _continue = false;
-
-            if (_readThread.ThreadState == ThreadState.Stopped)
+            try
             {
-                return;
-            }
+                _continue = false;
 
-
-            if (_readThread.IsAlive)
-            {
-                _readThread.Join();
-            }
-
-            if (_serialPort != null && _serialPort.IsOpen)
-            {
-                _serialPort.Close();
-            }
-
-        }
-        catch (Exception err)
-        {
-            OnExceptioned(err);
-            _ = err.Message;
-        }
-    }
-
-    public void Write(string message)
-    {
-        try
-        {
-            if (_serialPort != null && _serialPort.IsOpen)
-            {
-                _serialPort.WriteLine(message);
-                OnDataSent(message);
-            }
-            else
-            {
-                throw new Exception("Trying to write to closed serial port.");
-            }
-        }
-        catch (Exception err)
-        {
-            OnExceptioned(err);
-            _ = err.Message;
-        }
-    }
-
-    private void Read()
-    {
-        try
-        {
-            while (_continue)
-            {
-                if (_serialPort != null && _serialPort.IsOpen)
+                if (_readThread.ThreadState != ThreadState.Stopped && _readThread.IsAlive)
                 {
-                    if (_serialPort.BytesToRead > 0)
+                    _readThread.Join();
+                }
+
+                if (_serialPort.IsOpen)
+                {
+                    _serialPort.Close();
+                }
+            }
+            catch (Exception err)
+            {
+                OnExceptioned(err);
+                throw; // Rethrow the exception to preserve stack trace
+            }
+        }
+
+        public void Write(string message)
+        {
+            try
+            {
+                if (_serialPort.IsOpen)
+                {
+                    _serialPort.WriteLine(message);
+                    OnDataSent(message);
+                }
+                else
+                {
+                    throw new Exception("Trying to write to closed serial port.");
+                }
+            }
+            catch (Exception err)
+            {
+                OnExceptioned(err);
+                throw; // Rethrow the exception to preserve stack trace
+            }
+        }
+
+        private void Read()
+        {
+            try
+            {
+                while (_continue)
+                {
+                    if (_serialPort.IsOpen)
                     {
-                        try
+                        if (_serialPort.BytesToRead > 0)
                         {
-                            string message = _serialPort.ReadLine();
-                            OnDataReceived(message);
+                            try
+                            {
+                                var message = _serialPort.ReadLine();
+                                OnDataReceived(message);
+                            }
+                            catch (TimeoutException) { }
                         }
-                        catch (TimeoutException) { }
+                        else
+                        {
+                            Thread.Sleep(50);
+                        }
                     }
                     else
                     {
                         Thread.Sleep(50);
                     }
                 }
-                else
-                {
-                    Thread.Sleep(50);
-                }
+            }
+            catch (Exception err)
+            {
+                OnExceptioned(err);
+                throw; // Rethrow the exception to preserve stack trace
             }
         }
-        catch (Exception err)
+
+        protected virtual void OnDataReceived(string message)
         {
-            OnExceptioned(err);
-            _ = err.Message;
+            DataReceived?.Invoke(this, message);
+        }
+
+        protected virtual void OnDataSent(string message)
+        {
+            DataSent?.Invoke(this, message);
+        }
+
+        protected virtual void OnExceptioned(Exception e)
+        {
+            Exceptioned?.Invoke(this, e);
+        }
+
+        public void Dispose()
+        {
+            if (_serialPort.IsOpen)
+            {
+                _serialPort.Close();
+            }
+            _serialPort.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
-
-    protected virtual void OnDataReceived(string message)
-    {
-        DataReceived?.Invoke(this, message);
-    }
-
-    protected virtual void OnDataSent(string message)
-    {
-        DataSent?.Invoke(this, message);
-    }
-
-    protected virtual void OnExceptioned(Exception e)
-    {
-        Exceptioned?.Invoke(this, e);
-    }
 }
-

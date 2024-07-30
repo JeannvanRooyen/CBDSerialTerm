@@ -97,7 +97,7 @@ namespace CBDSerialTerm.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        [global::System.Configuration.DefaultSettingValueAttribute("COM1")]
         public string PortName {
             get {
                 return ((string)(this["PortName"]));
@@ -200,6 +200,42 @@ namespace CBDSerialTerm.Properties {
             }
             set {
                 this["ShowSentCommands"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ShowTimeStamp {
+            get {
+                return ((bool)(this["ShowTimeStamp"]));
+            }
+            set {
+                this["ShowTimeStamp"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ShowGraph {
+            get {
+                return ((bool)(this["ShowGraph"]));
+            }
+            set {
+                this["ShowGraph"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool EULAAccepted {
+            get {
+                return ((bool)(this["EULAAccepted"]));
+            }
+            set {
+                this["EULAAccepted"] = value;
             }
         }
     }

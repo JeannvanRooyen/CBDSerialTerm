@@ -1,0 +1,24 @@
+﻿<Window x:Name="settingsWindow" x:Class="CBDSerialTerm.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CBDSerialTerm" xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        Style="{StaticResource MaterialDesignWindow}"
+        mc:Ignorable="d"
+        Title="Settings" d:Background="#303030" d:Foreground="White" Height="400" Width="400" WindowStartupLocation="CenterOwner" WindowStyle="None" BorderBrush="Cyan" BorderThickness="1" ResizeMode="NoResize" ShowInTaskbar="False" Icon="/appicon.ico">
+    <Grid>
+        <Button x:Name="buttonClose" HorizontalAlignment="Right" Margin="0,5,5,0" VerticalAlignment="Top" Padding="0" Width="30" Height="30" Click="ButtonClose_Click">
+            <materialDesign:PackIcon Kind="Close" Foreground="White" Width="20" Height="20" />
+        </Button>
+        <ScrollViewer Margin="10,40,10,47">
+            <Grid Height="301">
+                <CheckBox Grid.Column="0" x:Name="checkBoxShowTimestamp" Content="Show Timestamp" HorizontalAlignment="Left" d:IsChecked="True" Margin="10,0,0,0" VerticalAlignment="Top"/>
+                <CheckBox Grid.Column="0" x:Name="checkBoxShowGraph" Content="Show Graph" HorizontalAlignment="Left" d:IsChecked="True" IsEnabled="False" Margin="10,23,0,0" VerticalAlignment="Top"/>
+                <CheckBox Grid.Column="0" x:Name="checkBoxShowSentCommands" Content="Show Sent Commands" HorizontalAlignment="Left" d:IsChecked="True" Margin="10,46,0,0" VerticalAlignment="Top"/>
+            </Grid>
+        </ScrollViewer>
+        <Button x:Name="buttonDone" Content="Done" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Click="buttonDone_Click"/>
+        <Label x:Name="label" Content="Settings" HorizontalAlignment="Left" Margin="3,3,0,0" VerticalAlignment="Top" FontSize="14" FontWeight="Bold"/>
+    </Grid>
+</Window>

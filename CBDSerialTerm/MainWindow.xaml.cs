@@ -36,7 +36,8 @@ namespace CBDSerialTerm
         {
             Initialized += MainWindow_Initialized;
             Closing += MainWindow_Closing;
-           
+            this.Loaded += MainWindow_Loaded;
+
             InitializeComponent();
         }
 
@@ -61,6 +62,17 @@ namespace CBDSerialTerm
             UpdatePort();
             UpdateElements();
             mainTextBox.SelectionChanged += MainTextBox_SelectionChanged;
+            
+
+            
+        }
+
+        private void MainWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (Properties.Settings.Default.EULAAccepted == false)
+            {
+                showEULA();
+            }
         }
 
         private void UpdateElements()
@@ -96,14 +108,18 @@ namespace CBDSerialTerm
                     if (serialTerminal != null)
                     {
                         labelPortState.Content = "State: " + (serialTerminal.IsOpen ? "Opened, " : isAvailable ? "Ready" : "Not Available") + ", ";
-                        iconState.Kind = serialTerminal.IsOpen ? MaterialDesignThemes.Wpf.PackIconKind.Stop : MaterialDesignThemes.Wpf.PackIconKind.Play;
+                        iconStateB.Kind = serialTerminal.IsOpen ? MaterialDesignThemes.Wpf.PackIconKind.Stop : MaterialDesignThemes.Wpf.PackIconKind.Play;
+                        iconStateB.Foreground = serialTerminal.IsOpen ? Brushes.Yellow : Brushes.YellowGreen;
+                        iconStateA.Foreground = serialTerminal.IsOpen ? Brushes.Yellow : Brushes.YellowGreen;
                         textBoxTx.IsReadOnly = !serialTerminal.IsOpen;
                         buttonPortConfig.IsEnabled = !serialTerminal.IsOpen;
                     }
                     else
                     {
                         labelPortState.Content = "State: Not selected, ";
-                        iconState.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+                        iconStateB.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+                        iconStateB.Foreground = Brushes.GreenYellow;
+                        iconStateA.Foreground = Brushes.GreenYellow;
                         textBoxTx.IsReadOnly = true;
                         textBoxTx.Text = "Port is not configured";
                         buttonPortConfig.IsEnabled = true;
@@ -115,7 +131,9 @@ namespace CBDSerialTerm
                 if (buttonToggleState != null)
                 {
                     buttonToggleState.IsEnabled = false;
-                    iconState.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+                    iconStateB.Kind = MaterialDesignThemes.Wpf.PackIconKind.Play;
+                    iconStateB.Foreground = Brushes.Yellow;
+                    iconStateA.Foreground = Brushes.Yellow;
                 }
 
                 if (textBoxTx != null)
@@ -149,7 +167,7 @@ namespace CBDSerialTerm
                     baudRate: Properties.Settings.Default.Baudrate,
                     parity: (Parity)Properties.Settings.Default.ParityIndex,
                     dataBits: Properties.Settings.Default.DataBits,
-                    stopBits: (StopBits)Properties.Settings.Default.StopBitsIndex,
+                    stopBits: (StopBits)Properties.Settings.Default.StopBits,
                     handshake: (Handshake)Properties.Settings.Default.HandshakeIndex,
                     readTimeout: 500,
                     writeTimeout: 500,
@@ -178,9 +196,29 @@ namespace CBDSerialTerm
 
             if (Properties.Settings.Default.ShowSentCommands)
             {
+                AddLine("Tx: " + e, Brushes.DarkOrange,true);
+            }
+        }
+
+        private void AddLine(string text, Brush foreground, bool paragraphed)
+        {
+            var lineText = text;
+            if (Properties.Settings.Default.ShowTimeStamp)
+            {
+                lineText = DateTime.Now.ToString("HH:mm:ss.fff") + " " + lineText;
+            }
+
+            if (!paragraphed)
+            {
+                mainTextBox.AppendText(lineText);
+                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.Silver;
+                scrollViewerRx.ScrollToBottom();
+            }
+            else
+            {
                 mainTextBox.Document.Blocks.Add(new Paragraph());
-                mainTextBox.AppendText(e.Replace("\n", ""));
-                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.Orange;
+                mainTextBox.AppendText(lineText.Replace("\n", ""));
+                mainTextBox.Document.Blocks.LastBlock.Foreground = foreground;
                 mainTextBox.Document.Blocks.Add(new Paragraph());
                 scrollViewerRx.ScrollToBottom();
             }
@@ -341,9 +379,7 @@ namespace CBDSerialTerm
                     }
                 }
 
-                mainTextBox.AppendText(e);
-                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.Silver;
-                scrollViewerRx.ScrollToBottom();
+                AddLine("Rx: " + e, Brushes.Silver, false);
                 bytesReceived += e.Length;
 
                 if (e.Contains("\n") || e.Contains("\r"))
@@ -367,6 +403,7 @@ namespace CBDSerialTerm
                     {
                         textBoxTx.Text = null;
                         textBoxTx.IsReadOnly = false;
+
                     }
                     else
                     {
@@ -474,6 +511,58 @@ namespace CBDSerialTerm
             {
                 string command = textBoxTx.Text;
                 serialTerminal.Write(command + "\r\n");
+            }
+        }
+
+        private void menuItemSettings_Click(object sender, RoutedEventArgs e)
+        {
+            SettingsWindow settingsWindow = new SettingsWindow();
+            settingsWindow.Owner = this;
+            var result = settingsWindow.ShowDialog();
+        }
+
+        private void menuItemPortSettings_Click(object sender, RoutedEventArgs e)
+        {
+            PortSettingsWindow portSettingsWindow = new PortSettingsWindow();
+            portSettingsWindow.Owner = this;
+            var result = portSettingsWindow.ShowDialog();
+
+            if (result == true)
+            {
+                UpdatePort();
+            }
+        }
+
+        private void menuItemEULA_Click(object sender, RoutedEventArgs e)
+        {
+            showEULA();
+        }
+
+        private void showEULA()
+        {
+            try
+            {
+                EULAWindow eULAWindow = new EULAWindow();
+                eULAWindow.Owner = this;
+                var result = eULAWindow.ShowDialog();
+
+                if (result == false)
+                {
+                    try
+                    {
+                        this.Close();
+                    }
+                    catch (Exception ex1)
+                    {
+                        string msg1 = ex1.Message;
+                        Application.Current.Shutdown();
+                    }
+                }
+            }
+            catch (Exception ex2)
+            {
+                var msg2 = ex2.Message;
+                Application.Current.Shutdown();
             }
         }
     }

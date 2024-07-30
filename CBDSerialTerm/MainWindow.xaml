@@ -14,30 +14,33 @@
             </MenuItem>
             <MenuItem Header="_Edit" Padding="5" Margin="5,0,0,0" Height="25">
                 <MenuItem Header="_Copy" IsEnabled="False" x:Name="menuItemCopy" Click="menuItemCopy_Click"></MenuItem>
+                <MenuItem Header="_Port Settings" IsEnabled="True" x:Name="menuItemPortSettings" Click="menuItemPortSettings_Click"></MenuItem>
+                <MenuItem Header="_Settings" IsEnabled="True" x:Name="menuItemSettings" Click="menuItemSettings_Click"></MenuItem>
             </MenuItem>
             <MenuItem Header="_Help" Padding="5" Height="25" Margin="5,0,0,0">
                 <MenuItem Header="_About" x:Name="menuItemAbout" Click="MenuItemAbout_Click"/>
+                <MenuItem Header="_End User License Agreement" x:Name="menuItemEULA" Click="menuItemEULA_Click"/>
             </MenuItem>
         </Menu>
         <DockPanel Margin="0,30,0,0" VerticalAlignment="Top" Height="35">
 
             <ToolBarTray DockPanel.Dock="Top">
                 <ToolBar>
-                    <Button x:Name="buttonPortConfig" Cursor="Hand" Click="buttonPortConfig_Click" ToolTip="Port Settings" FontFamily="Arial" FontSize="16" Padding="5,5,5,5">
+                    <Button x:Name="buttonPortConfig" Cursor="Hand" Click="buttonPortConfig_Click" ToolTip="Port Settings" FontFamily="Arial" FontSize="16" Padding="5,5,5,5" Margin="0,0,5,0">
                         <materialDesign:PackIcon Kind="GearOutline" Foreground="DarkOrange"/>
                     </Button>
-                    <Button x:Name="buttonClear" Cursor="Hand" Click="buttonClear_Click" ToolTip="Clear History" IsEnabled="False" FontFamily="Arial" FontSize="16" Padding="5,5,5,5">
+                    <Button x:Name="buttonClear" Cursor="Hand" Click="buttonClear_Click" ToolTip="Clear History" IsEnabled="False"  FontFamily="Arial" FontSize="16" Padding="5,5,5,5" Margin="0,0,5,0">
                         <materialDesign:PackIcon Kind="DeleteOutline" Foreground="OrangeRed"/>
                     </Button>
-                    <Button x:Name="buttonToggleState" Cursor="Hand" IsEnabled="False" Click="buttonToggleState_Click" FontFamily="Arial" FontSize="16" ToolTip="Open / Close"  Padding="5,5,5,5">
+                    <Button x:Name="buttonToggleState" Cursor="Hand" IsEnabled="False" Click="buttonToggleState_Click" FontFamily="Arial" FontSize="16" ToolTip="Open / Close"  Padding="5,5,5,5" Margin="0,0,5,0">
                         <WrapPanel>
-                            <materialDesign:PackIcon Kind="CableData" Foreground="SlateBlue"/>
-                            <materialDesign:PackIcon x:Name="iconState" Kind="Play" Foreground="SlateBlue"/>
+                            <materialDesign:PackIcon x:Name="iconStateA" Kind="CableData" Foreground="GreenYellow"/>
+                            <materialDesign:PackIcon x:Name="iconStateB" Kind="Play" Foreground="GreenYellow"/>
                         </WrapPanel>
                     </Button>
                     <Button x:Name="buttonCopy" Cursor="Hand" IsEnabled="False" Click="buttonCopy_Click" FontFamily="Arial" FontSize="16" ToolTip="Copy"  Padding="5,5,5,5">
                         <WrapPanel>
-                            <materialDesign:PackIcon Kind="ContentCopy" Foreground="LawnGreen"/>
+                            <materialDesign:PackIcon Kind="ContentCopy" Foreground="SlateBlue"/>
                         </WrapPanel>
                     </Button>
                 </ToolBar>

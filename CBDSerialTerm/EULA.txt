@@ -1,0 +1,74 @@
+End User License Agreement (EULA)
+
+Effective Date: 2024-07-30
+
+Parties:
+
+Licensor: Code Blood Development (Pty) Ltd ("Code Blood Dev")
+Licensee: End User ("User")
+1. Introduction
+
+This End User License Agreement (EULA) is a legal agreement between Code Blood Dev and the User for the use of the compiled application provided by Code Blood Dev (the "Application"). By installing, copying, or otherwise using the Application, the User agrees to be bound by the terms of this EULA. If the User does not agree to the terms of this EULA, they must not install, copy, or use the Application.
+
+2. Grant of License
+
+Code Blood Dev grants the User a non-exclusive, non-transferable, revocable license to use the Application for personal or internal business purposes, subject to the terms and conditions of this EULA.
+
+3. Use Restrictions
+
+The User agrees not to:
+
+Modify, reverse engineer, decompile, or disassemble the Application.
+Reproduce, distribute, or create derivative works from the Application.
+Sell, lease, or sublicense the Application.
+Use the Application for any commercial purposes without crediting Code Blood Dev.
+Bundle the Application with any other software or distribute it as part of a software package without crediting Code Blood Dev.
+4. No Direct Profit
+
+The Application is released for free use. The User must not:
+
+Directly profit from the Application.
+Sell the Application.
+Bundle the Application commercially without providing credit to Code Blood Dev.
+5. Credit to the Author
+
+Any commercial use, bundling, or distribution of the Application must include clear credit to Code Blood Dev as the author and owner of the Application.
+
+6. Termination
+
+This EULA is effective until terminated. Code Blood Dev may terminate this EULA at any time if the User breaches any terms of this EULA. Upon termination, the User must cease all use of the Application and destroy all copies of the Application.
+
+7. Ownership
+
+The Application is licensed, not sold. Code Blood Dev retains all right, title, and interest in and to the Application, including all intellectual property rights therein.
+
+8. Disclaimer of Warranties
+
+The Application is provided "as is" without warranty of any kind, either express or implied, including but not limited to the implied warranties of merchantability, fitness for a particular purpose, or non-infringement.
+
+9. Limitation of Liability
+
+In no event shall Code Blood Dev be liable for any special, incidental, indirect, or consequential damages whatsoever arising out of the use of or inability to use the Application.
+
+10. Governing Law
+
+This EULA shall be governed by and construed in accordance with the laws of [Your Jurisdiction], without regard to its conflict of law principles.
+
+11. Contact Information
+
+For any questions or concerns regarding this EULA, please contact:
+[Your Contact Information]
+
+Notice:
+
+By installing or using the Application, you agree to the terms and conditions of this End User License Agreement (EULA). If you do not agree, do not install or use the Application.
+
+
+Contact Information:
+--------------------
+Code Blood Dev (Pty) Ltd. Copyright 2024
+South Africa
+
+jeann@codeblood.co.za
+jeannvanrooyen@live.co.za
+info@codeblood.co.za
