@@ -66,7 +66,7 @@ namespace CBDSerialTerm
 
             
         }
-
+        
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
         {
             if (Properties.Settings.Default.EULAAccepted == false)
@@ -176,12 +176,12 @@ namespace CBDSerialTerm
 
             serialTerminal.DataReceived += SerialTerminal_DataReceived;
             serialTerminal.DataSent += SerialTerminal_DataSent;
-            serialTerminal.Exceptioned += SerialTerminal_Exceptioned;
+            serialTerminal.Exceptioned += SerialTerminal_Excepted;
 
             UpdateElements();
         }
 
-        private void SerialTerminal_Exceptioned(object? sender, Exception e)
+        private void SerialTerminal_Excepted(object? sender, Exception e)
         {
             MessageBox.Show(GetWindow(this), e.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
         }
@@ -223,7 +223,7 @@ namespace CBDSerialTerm
                 scrollViewerRx.ScrollToBottom();
             }
         }
-
+         
         private void DisplayGraphs()
         {
             scrollViewerGraph.Content = null;
@@ -306,7 +306,6 @@ namespace CBDSerialTerm
                 scrollViewerRx.ScrollToBottom();
             }
         }
-
 
         private void SerialTerminal_DataReceived(object? sender, string e)
         {
