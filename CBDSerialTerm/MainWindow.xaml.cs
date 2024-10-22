@@ -1,4 +1,5 @@
-﻿using System.IO.Ports;
+﻿using System.Diagnostics;
+using System.IO.Ports;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,7 +31,12 @@ namespace CBDSerialTerm
         private long bytesSent = 0;
         private long linesReceived = 0;
         private Dictionary<int, GraphData> graphs = new Dictionary<int, GraphData>();
+        private List<string[]> gridData = new List<string[]>();
         private List<string> sentCommands = new List<string>();
+        private bool allowGraph = false;
+        private bool allowGrid = false;
+        private bool showGraph = false;
+        private bool showGrid = false;
 
         public MainWindow()
         {
@@ -226,7 +232,7 @@ namespace CBDSerialTerm
          
         private void DisplayGraphs()
         {
-            scrollViewerGraph.Content = null;
+            scrollViewerRight.Content = null;
 
             try
             {
@@ -294,7 +300,7 @@ namespace CBDSerialTerm
 
                 graphComponent.SetView(plotModel);
 
-                scrollViewerGraph.Content = graphComponent;
+                scrollViewerRight.Content = graphComponent;
             }
             catch (Exception ex)
             {
@@ -307,87 +313,100 @@ namespace CBDSerialTerm
             }
         }
 
-        private void SerialTerminal_DataReceived(object? sender, string e)
+        private void SerialTerminal_DataReceived(object? sender, CBDSerialLib.DataReceivedEventArgs e)
         {
-            Dispatcher.InvokeAsync(() =>
+            if (!string.IsNullOrEmpty(e.Data))
             {
-                if (e.StartsWith("GRAPH:SERIES:"))
+                Dispatcher.InvokeAsync(() =>
                 {
-                    try
+                    if (e.CanGrid)
                     {
-                        var parts = e.Split(new[] { ':', ',' }, StringSplitOptions.RemoveEmptyEntries);
+                        var gridLine = e.Data.Split(',');
 
-                        // Check if the command has the minimum required parts
-                        if (parts.Length < 5)
-                        {
-                            throw new FormatException("Invalid command format: not enough parts.");
-                        }
+                        string x = "y";
+                    }
 
-                        // Parse the series index
-                        if (!int.TryParse(parts[2], out int seriesIndex))
+                    if (e.CanGraph)
+                    {
+                        if (e.Data.StartsWith("GRAPH:SERIES:"))
                         {
-                            throw new FormatException($"Invalid series index: {parts[2]} is not an integer.");
-                        }
-
-                        if (parts.Length >= 5)
-                        {
-                            string seriesTitle = parts[3];
-                            var data = new List<double>();
-                            for (int i = 5; i < parts.Length; i++)
+                            try
                             {
-                                if (!double.TryParse(parts[i], out double value))
+                                var parts = e.Data.Split(new[] { ':', ',' }, StringSplitOptions.RemoveEmptyEntries);
+
+                                // Check if the command has the minimum required parts
+                                if (parts.Length < 5)
                                 {
-                                    throw new FormatException($"Invalid data value: {parts[i]} is not a valid number.");
+                                    throw new FormatException("Invalid command format: not enough parts.");
                                 }
-                                data.Add(value);
-                            }
 
-                            if (!graphs.ContainsKey(seriesIndex))
+                                // Parse the series index
+                                if (!int.TryParse(parts[2], out int seriesIndex))
+                                {
+                                    throw new FormatException($"Invalid series index: {parts[2]} is not an integer.");
+                                }
+
+                                if (parts.Length >= 5)
+                                {
+                                    string seriesTitle = parts[3];
+                                    var data = new List<double>();
+                                    for (int i = 5; i < parts.Length; i++)
+                                    {
+                                        if (!double.TryParse(parts[i], out double value))
+                                        {
+                                            throw new FormatException($"Invalid data value: {parts[i]} is not a valid number.");
+                                        }
+                                        data.Add(value);
+                                    }
+
+                                    if (!graphs.ContainsKey(seriesIndex))
+                                    {
+                                        // Create new series if it doesn't exist
+                                        graphs[seriesIndex] = new GraphData(seriesTitle);
+                                    }
+                                    else if (graphs[seriesIndex].Title != seriesTitle)
+                                    {
+                                        // Update the title if it has changed
+                                        graphs[seriesIndex].Title = seriesTitle;
+                                    }
+
+                                    graphs[seriesIndex].Values.AddRange(data);
+
+                                    DisplayGraphs();
+                                }
+                            }
+                            catch (FormatException ex)
                             {
-                                // Create new series if it doesn't exist
-                                graphs[seriesIndex] = new GraphData(seriesTitle);
+                                // Inform the user of the specific syntax error
+                                mainTextBox.Document.Blocks.Add(new Paragraph());
+                                mainTextBox.AppendText(ex.GetType().ToString() + ": " + ex.Message);
+                                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.OrangeRed;
+                                mainTextBox.Document.Blocks.Add(new Paragraph());
+                                scrollViewerRx.ScrollToBottom();
                             }
-                            else if (graphs[seriesIndex].Title != seriesTitle)
+                            catch (Exception ex)
                             {
-                                // Update the title if it has changed
-                                graphs[seriesIndex].Title = seriesTitle;
+                                // Inform the user of the specific syntax error
+                                mainTextBox.Document.Blocks.Add(new Paragraph());
+                                mainTextBox.AppendText(ex.GetType().ToString() + ": " + ex.Message);
+                                mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.OrangeRed;
+                                mainTextBox.Document.Blocks.Add(new Paragraph());
+                                scrollViewerRx.ScrollToBottom();
                             }
-
-                            graphs[seriesIndex].Values.AddRange(data);
-
-                            DisplayGraphs();
                         }
                     }
-                    catch (FormatException ex)
+
+                    AddLine("Rx: " + e.Data.Replace("\r\r","\r"), Brushes.Silver, false);
+                    bytesReceived += e.Data.Length;
+
+                    if (e.Data.Contains("\n") || e.Data.Contains("\r"))
                     {
-                        // Inform the user of the specific syntax error
-                        mainTextBox.Document.Blocks.Add(new Paragraph());
-                        mainTextBox.AppendText(ex.GetType().ToString() + ": " + ex.Message);
-                        mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.OrangeRed;
-                        mainTextBox.Document.Blocks.Add(new Paragraph());
-                        scrollViewerRx.ScrollToBottom();
+                        linesReceived++;
                     }
-                    catch (Exception ex)
-                    {
-                        // Inform the user of the specific syntax error
-                        mainTextBox.Document.Blocks.Add(new Paragraph());
-                        mainTextBox.AppendText(ex.GetType().ToString() + ": " + ex.Message);
-                        mainTextBox.Document.Blocks.LastBlock.Foreground = Brushes.OrangeRed;
-                        mainTextBox.Document.Blocks.Add(new Paragraph());
-                        scrollViewerRx.ScrollToBottom();
-                    }
-                }
 
-                AddLine("Rx: " + e, Brushes.Silver, false);
-                bytesReceived += e.Length;
-
-                if (e.Contains("\n") || e.Contains("\r"))
-                {
-                    linesReceived++;
-                }
-
-                labelRX.Content = $"Rx: {bytesReceived:#,###,###,###} bytes / {linesReceived} lines";
-            });
+                    labelRX.Content = $"Rx: {bytesReceived:#,###,###,###} bytes / {linesReceived} lines";
+                });
+            }
         }
 
         private void buttonToggleState_Click(object sender, RoutedEventArgs e)
@@ -435,7 +454,7 @@ namespace CBDSerialTerm
                     }
                 }
 
-                scrollViewerGraph.Content = null;
+                scrollViewerRight.Content = null;
 
                 graphs = new Dictionary<int, GraphData>();
 

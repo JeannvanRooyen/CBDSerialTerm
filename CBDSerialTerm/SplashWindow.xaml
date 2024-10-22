@@ -6,9 +6,10 @@
         xmlns:local="clr-namespace:CBDSerialTerm"
         mc:Ignorable="d"
         Title="SplashWindow" Height="600" Width="600" WindowStyle="None" WindowStartupLocation="CenterScreen" ResizeMode="NoResize" ShowInTaskbar="False" Topmost="True" KeyDown="Window_KeyDown">
-    <Grid MouseDown="Grid_MouseDown" >
-        <Image Source="/SerialTerm.jpg" Stretch="UniformToFill"/>
-        <Image Source="/logo.jpg" VerticalAlignment="Center" HorizontalAlignment="Center" Width="250" Opacity="0.9"/>
+    <Grid MouseDown="Grid_MouseDown" Background="#404040">
+        <Image Source="/SerialTerm.jpg" Stretch="UniformToFill" Margin="5,5,5,5"/>
+        <Image Source="/logo.jpg" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="150" Opacity="0.95" Margin="20,20,20,20"/>
         <Label x:Name="label" Content="CBD Serial Term V1.0" FontSize="14" HorizontalAlignment="Center" Margin="0,404,0,166" Foreground="#E5FFFFFF"/>
+        <Label x:Name="label1" Content="Serial Terminal" FontSize="40" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

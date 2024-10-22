@@ -61,7 +61,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CBDSerialLib\CBDSerialLib.csproj" />
+    <ProjectReference Include="..\..\CBDSerialLib\CBDSerialLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>
