@@ -1,25 +1,16 @@
 # CBDSerialTerm
 
-==========================
+
 Implicit Acceptance Notice
-==========================
-(For implicit acceptance, include a prominent notice at the top of the page or repository where the code is accessed, to point to here:)
-
 --------------------------
-Notice:
-
 By continuing to access and view this source code, you agree to the terms and conditions of the Non-Disclosure Agreement (NDA) provided above. Any reproduction of any part thereof is prohibited. Any gain, financial or otherwise, from any part of this code is prohibited. If you do not agree, please exit and cease viewing immediately.
---------------------------
-
-
-
 
 Non-Disclosure Agreement (NDA) Terms and Conditions
-
+---------------------------------------------------
 Effective Date: 2024-07-30 - or Date of Grant of Access
 
-Parties:
-
+Parties
+-------
 Disclosing Party: Code Blood Development (Pty) Ltd.
 Receiving Party: Viewer or Reviewer’s Name/Title or "User"
 
