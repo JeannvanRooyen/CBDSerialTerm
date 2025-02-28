@@ -18,11 +18,16 @@ namespace CBDSerialLib.Models.NMEA
 
         public static GLL? FromString(string gllString)
         {
-            if (string.IsNullOrEmpty(gllString)) return null;
+            if (string.IsNullOrEmpty(gllString))
+                throw new ArgumentNullException(nameof(gllString));
+
+            var strings = gllString.Split(',');
+
+            if (strings.Length < 7)
+                throw new FormatException("GLL string format is invalid.");
 
             try
             {
-                var strings = gllString.Split(',');
                 var result = new GLL
                 {
                     GPSCoordinate = new GPSCoordinate(Helpers.ParseLatitude(strings[1], strings[2]), Helpers.ParseLongitude(strings[3], strings[4]),0),

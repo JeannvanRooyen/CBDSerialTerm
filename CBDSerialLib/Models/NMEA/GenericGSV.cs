@@ -43,17 +43,21 @@ namespace CBDSerialLib.Models.NMEA
 
         public static GenericGSV? FromString(EGSVType gSVType, string gngsvString)
         {
+            if (string.IsNullOrEmpty(gngsvString))
+                throw new ArgumentNullException(nameof(gngsvString));
+
+            if (gngsvString.Length < 8)
+                throw new FormatException("GNGSV string format is invalid.");
+
             try
             {
-                if (string.IsNullOrEmpty(gngsvString)) return null;
-
                 Debug.WriteLine(gngsvString);
                 var result = new GenericGSV(gSVType);
                 result.GSVType = gSVType;
                 var strings = gngsvString.Split(',');
 
-            // Start reading from index 4, as the first four fields are metadata
-            for (int i = 4; i < strings.Length - 1; i += 4)
+                // Start reading from index 4, as the first four fields are metadata
+                for (int i = 4; i < strings.Length - 1; i += 4)
                 {
                     try
                     {

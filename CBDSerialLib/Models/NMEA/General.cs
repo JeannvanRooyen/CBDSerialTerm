@@ -65,11 +65,14 @@ namespace CBDSerialLib.Models.NMEA
 
         public static GSV FromString(string[] gsvString)
         {
+            if (gsvString == null)
+                throw new ArgumentNullException(nameof(gsvString));
+
+            if (gsvString.Length < 8)
+                throw new FormatException("GSV string format is invalid.");
+
             try
             {
-                if (gsvString.Length < 8)
-                    throw new FormatException("GSV string format is invalid.");
-
                 int satelliteId = int.Parse(gsvString[4]);
                 int elevation = int.Parse(gsvString[5]);
                 int azimuth = int.Parse(gsvString[6]);

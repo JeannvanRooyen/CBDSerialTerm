@@ -40,15 +40,17 @@ namespace CBDSerialLib.Models.NMEA
         // Factory method to parse from a string
         public static GenericGGA? FromString(string ggaString)
         {
-            if (string.IsNullOrEmpty(ggaString)) return null;
+            if (string.IsNullOrEmpty(ggaString))
+                throw new ArgumentNullException(nameof(ggaString));
+
+            var strings = ggaString.Split(',');
+
+            if (strings.Length < 15)
+                throw new FormatException("GGA string format is invalid.");
+
             try
             {
                 var result = new GenericGGA();
-                var strings = ggaString.Split(',');
-
-                if (strings.Length < 15) // Ensure there are enough fields in the sentence
-                    throw new FormatException("Invalid GGA string format.");
-
                 result.raw_time = Helpers.ParseInt(strings[1]); // Time of fix in hhmmss.ss
                 result.GPSCoordinate = new GPSCoordinate(
                     Helpers.ParseLatitude(strings[2], strings[3]),

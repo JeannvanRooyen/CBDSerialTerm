@@ -17,12 +17,16 @@ namespace CBDSerialLib.Models.NMEA
 
         public static GGA? FromString(string gaaString)
         {
-            if (string.IsNullOrEmpty(gaaString)) return null;
+            if (string.IsNullOrEmpty(gaaString))
+                throw new ArgumentNullException(nameof(gaaString));
+
+            var strings = gaaString.Split(',');
+
+            if (strings.Length < 15)
+                throw new FormatException("GGA string format is invalid.");
 
             try
             {
-                var strings = gaaString.Split(',');
-
                 var stringAlt = gaaString.Replace(strings.First(), "").Replace(strings.Last(), "");
 
                 if (stringAlt.Contains("GN") || stringAlt.Contains("GP") || stringAlt.Contains("GS"))
